@@ -5,3 +5,9 @@ available on each TAG Neuron(R) installation. You can use the [Agent API][] to c
 and interoperate in the federated Neuron(R) network.
 
 [Agent API]: https://lab.tagroot.io/Documentation/Neuron/Agent.md
+
+## For more information
+
+The [Agent API][] is described on the documentation wiki at: <https://lab.tagroot.io/Documentation/Neuron/Agent.md>.
+You can also try the requests at that site.
+
