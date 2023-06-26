@@ -2,7 +2,7 @@
 {
 	"IO":
 	{
-		"Request": async function (Resource, RequestPayload, Internal)
+		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
 			var Request = new Promise((SetResult, SetException) =>
 			{
@@ -31,8 +31,18 @@
 				if (!Internal)
 					this.BeforeRequest(RequestPayload);
 
-				xhttp.open("POST", Resource, true);
-				xhttp.setRequestHeader("Content-Type", "application/json");
+				if (RequestPayload)
+				{
+					xhttp.open("POST", Resource, true);
+					xhttp.setRequestHeader("Content-Type", "application/json");
+				}
+				else
+					xhttp.open("GET", Resource, true);
+
+				xhttp.setRequestHeader("Accept", "application/json");
+
+				if (Language)
+					xhttp.setRequestHeader("Accept-Language", Language);
 
 				var Token = AgentAPI.Account.GetSessionString("AgentAPI.Token");
 				if (Token)
@@ -237,6 +247,11 @@
 
 			AgentAPI.IO.Log("Resetting session timer to " + Next + "s, with token life cycle of " + Seconds + "s");
 		},
+		"DomainInfo": async function (Language)
+		{
+			var Response = await AgentAPI.IO.Request("/Agent/Account/DomainInfo", null, false, Language);
+			return Response;
+		},
 		"Create": async function (UserName, EMail, Password, ApiKey, Secret, Seconds)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
@@ -330,6 +345,19 @@
 			this.RemoveSessionValue("AgentAPI.Token");
 
 			return Response;
+		},
+		"Recover": async function (UserName, PersonalNr, Country, EMail, PhoneNr)
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/Recover",
+				{
+					"userName": UserName,
+					"personalNr": PersonalNr,
+					"country": Country,
+					"eMail": EMail,
+					"phoneNr": PhoneNr
+				});
+
+			return Result;
 		}
 	},
 	"Xmpp":
@@ -765,6 +793,27 @@
 			};
 
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/SignContract", Request);
+
+			return Response;
+		},
+		"SignData": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, LegalId, DataBase64)
+		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + DataBase64 + ":" + LegalId;
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"legalId": LegalId,
+				"dataBase64": DataBase64
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/SignData", Request);
 
 			return Response;
 		},
