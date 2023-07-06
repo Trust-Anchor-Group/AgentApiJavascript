@@ -19,7 +19,27 @@
 							SetResult(Response);
 						}
 						else
-							SetException(Response);
+						{
+							var Alternatives = [];
+							var i = 1;
+							var Alternative = xhttp.getResponseHeader("X-AlternativeName" + (i++).toString());
+
+							while (Alternative)
+							{
+								Alternatives.push(Alternative);
+								Alternative = xhttp.getResponseHeader("X-AlternativeName" + (i++).toString());
+							}
+
+							var Error =
+							{
+								"message": Response,
+								"statusCode": xhttp.status,
+								"statusMessage": xhttp.statusText,
+								"alternatives": Alternatives
+							};
+
+							SetException(Error);
+						}
 
 						if (!Internal)
 							AgentAPI.IO.AfterResponse(Response);
