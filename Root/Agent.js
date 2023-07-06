@@ -664,6 +664,18 @@
 	},
 	"Legal":
 	{
+		"ValidatePNr": async function (CountryCode, PNr)
+		{
+			var Request =
+			{
+				"countryCode": CountryCode,
+				"pnr": PNr
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/ValidatePNr", Request);
+
+			return Response;
+		},
 		"ApplyId": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, Properties)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
