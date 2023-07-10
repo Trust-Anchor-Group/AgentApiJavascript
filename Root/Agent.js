@@ -696,6 +696,16 @@
 
 			return Response;
 		},
+		"GetApplicationAttributes": async function ()
+		{
+			var Request =
+			{
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/GetApplicationAttributes", Request);
+
+			return Response;
+		},
 		"ApplyId": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, Properties)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
