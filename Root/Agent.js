@@ -54,7 +54,9 @@
 				if (RequestPayload)
 				{
 					xhttp.open("POST", Resource, true);
-					xhttp.setRequestHeader("Content-Type", "application/json");
+
+					if (!(RequestPayload instanceof FormData))
+						xhttp.setRequestHeader("Content-Type", "application/json");
 				}
 				else
 					xhttp.open("GET", Resource, true);
@@ -68,7 +70,10 @@
 				if (Token)
 					xhttp.setRequestHeader("Authorization", "Bearer " + Token);
 
-				xhttp.send(JSON.stringify(RequestPayload));
+				if (RequestPayload instanceof FormData)
+					xhttp.send(RequestPayload);
+				else
+					xhttp.send(JSON.stringify(RequestPayload));
 			});
 
 			return await Request;
@@ -77,7 +82,30 @@
 		{
 			var Control = document.getElementById("AgentRequestPayload");
 			if (Control)
-				Control.innerText = JSON.stringify(Payload, null, 2);
+			{
+				if (Payload)
+				{
+					if (Payload instanceof FormData)
+					{
+						const Form = {};
+						for (let P of Payload.entries())
+						{
+							if (P[1] instanceof File)
+								Form[P[0]] = 'File...';
+							else if (P[1] instanceof Blob)
+								Form[P[0]] = 'Blob...';
+							else
+								Form[P[0]] = P[1];
+						}
+
+						Payload = Form;
+					}
+
+					Control.innerText = JSON.stringify(Payload, null, 2);
+				}
+				else
+					Control.innerText = "";
+			}
 		},
 		"AfterResponse": function (Payload)
 		{
@@ -88,6 +116,114 @@
 		"Log": function (Message)
 		{
 			console.log((new Date()).toString() + ": " + Message);
+		},
+		"LoadFileAsArrayBuffer": async function (FileInput)
+		{
+			var Request = new Promise((SetResult, SetException) =>
+			{
+				var Reader = new FileReader();
+
+				Reader.onload = async function (e)
+				{
+					SetResult(
+						{
+							"result": e.target.result,
+							"name": FileInput.name,
+							"type": FileInput.type
+						});
+				};
+
+				Reader.onerror = async function (e)
+				{
+					SetException(e);
+				};
+
+				Reader.readAsArrayBuffer(FileInput);
+			});
+
+			return await Request;
+		},
+		"LoadFileAsDataUrl": async function (FileInput)
+		{
+			var Request = new Promise((SetResult, SetException) =>
+			{
+				var Reader = new FileReader();
+
+				Reader.onload = async function (e)
+				{
+					SetResult(
+						{
+							"result": e.target.result,
+							"name": FileInput.name,
+							"type": FileInput.type
+						});
+				};
+
+				Reader.onerror = async function (e)
+				{
+					SetException(e);
+				};
+
+				Reader.readAsDataURL(FileInput);
+			});
+
+			return await Request;
+		},
+		"Delete": async function (Resource, Internal, Language)
+		{
+			var Request = new Promise((SetResult, SetException) =>
+			{
+				var xhttp = new XMLHttpRequest();
+				xhttp.onreadystatechange = function ()
+				{
+					if (xhttp.readyState == 4)
+					{
+						var Response = xhttp.responseText;
+
+						if (xhttp.status >= 200 && xhttp.status < 300)
+						{
+							if (Response !== "")
+								Response = JSON.parse(Response);
+
+							SetResult(Response);
+						}
+						else
+						{
+							var Error =
+							{
+								"message": Response,
+								"statusCode": xhttp.status,
+								"statusMessage": xhttp.statusText,
+								"alternatives": Alternatives
+							};
+
+							SetException(Error);
+						}
+
+						if (!Internal)
+							AgentAPI.IO.AfterResponse(Response);
+
+						delete xhttp;
+					}
+				};
+
+				if (!Internal)
+					this.BeforeRequest(null);
+
+				xhttp.open("DELETE", Resource, true);
+				xhttp.setRequestHeader("Accept", "application/json");
+
+				if (Language)
+					xhttp.setRequestHeader("Accept-Language", Language);
+
+				var Token = AgentAPI.Account.GetSessionString("AgentAPI.Token");
+				if (Token)
+					xhttp.setRequestHeader("Authorization", "Bearer " + Token);
+
+				xhttp.send();
+			});
+
+			return await Request;
 		}
 	},
 	"Account":
@@ -634,6 +770,23 @@
 
 			var Response = await AgentAPI.IO.Request("/Agent/Storage/LoadPrivateXml", Request);
 
+			return Response;
+		},
+		"Upload": async function (ContentFile, ContentId, Visibility)
+		{
+			var Request = new FormData();
+
+			Request.append("Content", ContentFile, ContentFile.name);
+			Request.append("ContentId", ContentId);
+			Request.append("Visibility", Visibility);
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/Content", Request);
+
+			return Response;
+		},
+		"Delete": async function (Url)
+		{
+			var Response = await AgentAPI.IO.Delete(Url);
 			return Response;
 		}
 	},
