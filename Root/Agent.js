@@ -1105,6 +1105,82 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/AuthorizeAccessToContract", Request);
 
 			return Response;
+		},
+		"PetitionId": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword,
+			LegalId, RemoteId, PetitionId, Purpose)
+		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
+				":" + LegalId + ":" + RemoteId;
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"legalId": LegalId,
+				"remoteId": RemoteId,
+				"petitionId": PetitionId,
+				"purpose": Purpose
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/PetitionId", Request);
+
+			return Response;
+		},
+		"PetitionSignature": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword,
+			LegalId, RemoteId, PetitionId, Purpose, ContentBase64)
+		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
+				":" + LegalId + ":" + RemoteId + ":" + ContentBase64;
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"legalId": LegalId,
+				"remoteId": RemoteId,
+				"petitionId": PetitionId,
+				"purpose": Purpose,
+				"contentBase64": ContentBase64
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/PetitionSignature", Request);
+
+			return Response;
+		},
+		"PetitionPeerReview": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword,
+			LegalId, RemoteId, PetitionId, Purpose)
+		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
+				":" + LegalId + ":" + RemoteId;
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"legalId": LegalId,
+				"remoteId": RemoteId,
+				"petitionId": PetitionId,
+				"purpose": Purpose
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/PetitionPeerReview", Request);
+
+			return Response;
 		}
 	},
 	"Wallet":
