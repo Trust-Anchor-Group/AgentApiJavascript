@@ -1078,6 +1078,32 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/SelectReviewService", Request);
 
 			return Response;
+		},
+		"AuthorizeAccessToId": async function (LegalId, RemoteId, Authorized)
+		{
+			var Request =
+			{
+				"legalId": LegalId,
+				"remoteId": RemoteId,
+				"authorized": Authorized
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/AuthorizeAccessToId", Request);
+
+			return Response;
+		},
+		"AuthorizeAccessToContract": async function (ContractId, RemoteId, Authorized)
+		{
+			var Request =
+			{
+				"contractId": ContractId,
+				"remoteId": RemoteId,
+				"authorized": Authorized
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/AuthorizeAccessToContract", Request);
+
+			return Response;
 		}
 	},
 	"Wallet":
