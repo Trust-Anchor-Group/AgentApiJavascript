@@ -1056,6 +1056,28 @@
 				"'/>";
 
 			await AgentAPI.Xmpp.SendXmlMessage(To, Xml);
+		},
+		"GetServiceProvidersForIdReview": async function ()
+		{
+			var Request =
+			{
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/GetServiceProvidersForIdReview", Request);
+
+			return Response;
+		},
+		"SelectReviewService": async function (ServiceId, ServiceProvider)
+		{
+			var Request =
+			{
+				"serviceId": ServiceId,
+				"serviceProvider": ServiceProvider
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/SelectReviewService", Request);
+
+			return Response;
 		}
 	},
 	"Wallet":
