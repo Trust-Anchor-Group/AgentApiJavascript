@@ -1057,10 +1057,11 @@
 
 			await AgentAPI.Xmpp.SendXmlMessage(To, Xml);
 		},
-		"GetServiceProvidersForIdReview": async function ()
+		"GetServiceProvidersForIdReview": async function (LegalId)
 		{
 			var Request =
 			{
+				"legalId": LegalId
 			};
 
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/GetServiceProvidersForIdReview", Request);
