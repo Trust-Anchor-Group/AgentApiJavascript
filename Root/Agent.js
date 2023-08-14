@@ -4,8 +4,7 @@
 	{
 		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
-			var Request = new Promise((SetResult, SetException) =>
-			{
+			var Request = new Promise((SetResult, SetException) =>			{
 				var xhttp = new XMLHttpRequest();
 				xhttp.onreadystatechange = function ()
 				{
@@ -43,8 +42,6 @@
 
 						if (!Internal)
 							AgentAPI.IO.AfterResponse(Response);
-
-						delete xhttp;
 					}
 				};
 
@@ -202,8 +199,6 @@
 
 						if (!Internal)
 							AgentAPI.IO.AfterResponse(Response);
-
-						delete xhttp;
 					}
 				};
 
@@ -1455,3 +1450,5 @@
 };
 
 AgentAPI.Account.RestartActiveSession();
+
+export default AgentAPI
