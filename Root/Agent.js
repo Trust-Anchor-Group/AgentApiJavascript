@@ -956,12 +956,15 @@
 
 			return Response;
 		},
-		"GetContract": async function (ContractId)
+		"GetContract": async function (ContractId, Format)
 		{
 			var Request =
 			{
 				"contractId": ContractId
 			};
+
+			if (Format)
+				Request["format"] = Format;
 
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/GetContract", Request);
 
