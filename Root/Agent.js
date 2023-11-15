@@ -1229,6 +1229,44 @@
 
 			return Response;
 		},
+		"GetPaymentOptionsForBuyingEDaler": async function (ServiceId, ServiceProvider,
+			SuccessUrl, FailureUrl, CancelUrl, TransactionId, TabId, FunctionName)
+		{
+			var Request =
+			{
+				"serviceId": ServiceId,
+				"serviceProvider": ServiceProvider,
+				"successUrl": SuccessUrl,
+				"failureUrl": FailureUrl,
+				"cancelUrl": CancelUrl,
+				"transactionId": TransactionId,
+				"tabId": TabId,
+				"functionName": FunctionName
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Wallet/GetPaymentOptionsForBuyingEDaler", Request);
+
+			return Response;
+		},
+		"GetPaymentOptionsForSellingEDaler": async function (ServiceId, ServiceProvider,
+			SuccessUrl, FailureUrl, CancelUrl, TransactionId, TabId, FunctionName)
+		{
+			var Request =
+			{
+				"serviceId": ServiceId,
+				"serviceProvider": ServiceProvider,
+				"successUrl": SuccessUrl,
+				"failureUrl": FailureUrl,
+				"cancelUrl": CancelUrl,
+				"transactionId": TransactionId,
+				"tabId": TabId,
+				"functionName": FunctionName
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Wallet/GetPaymentOptionsForSellingEDaler", Request);
+
+			return Response;
+		},
 		"InitiateBuyEDaler": async function (ServiceId, ServiceProvider, Amount, Currency,
 			SuccessUrl, FailureUrl, CancelUrl, TransactionId, TabId, FunctionName)
 		{
