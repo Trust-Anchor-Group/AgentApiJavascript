@@ -526,6 +526,15 @@
 				});
 
 			return Result;
+		},
+		"AuthenticateJwt": async function (Token)
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/AuthenticateJwt",
+				{
+					"token": Token
+				});
+
+			return Result;
 		}
 	},
 	"Xmpp":
