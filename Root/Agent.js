@@ -466,6 +466,18 @@
 
 			return Response;
 		},
+		"QuickLogin": async function (Seconds)
+		{
+			var Response = await AgentAPI.IO.Request("/Agent/Account/QuickLogin",
+				{
+					"seconds": Seconds
+				});
+
+			this.SetSessionString("AgentAPI.UserName", Response.userName);
+			this.SaveSessionToken(Response.jwt, Seconds, Math.round(Seconds / 2));
+
+			return Response;
+		},
 		"Refresh": async function (Seconds, Internal)
 		{
 			AgentAPI.IO.Log("Requesting a refresh of Agent API session token.");
