@@ -535,6 +535,14 @@
 				});
 
 			return Result;
+		},
+		"Info": async function ()
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/Info",
+				{
+				});
+
+			return Result;
 		}
 	},
 	"Xmpp":
