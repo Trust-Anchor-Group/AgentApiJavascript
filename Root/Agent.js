@@ -1,23 +1,26 @@
 ﻿var AgentAPI =
 {
-	"Internal":
+	"IO":
 	{
 		"Protocol": null,
 		"Host": null,
-	},
-	"IO":
-	{
 		"SetHost": function(host, secure = true) {
-			AgentAPI.Internal.Protocol = secure ? "https" : "http";
-			AgentAPI.Internal.Host = host;
+			if(!host) {
+				AgentAPI.IO.Protocol = null;
+				AgentAPI.IO.Host = null;
+			}
+			else {
+				AgentAPI.IO.Protocol = secure ? "https" : "http";
+				AgentAPI.IO.Host = host;
+			}
 		},
 		"GetBaseURL": function() {
-			const protocol = AgentAPI.Internal.Protocol || (window.location.protocol.includes("https") ? "https" : "http");
-			const host = AgentAPI.Internal.Host || window.location.host;
+			const protocol = AgentAPI.IO.Protocol || (window.location.protocol.includes("https") ? "https" : "http");
+			const host = AgentAPI.IO.Host || window.location.host;
 			return `${protocol}://${host}`;
 		},
 		"GetHost": function() {
-			return AgentAPI.Internal.Host || window.location.host;
+			return AgentAPI.IO.Host || window.location.host;
 		},
 		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
