@@ -1081,7 +1081,7 @@
 		},
 		"SendProposal": async function (ContractId, Role, To, Message)
 		{
-			var Xml = "<contractProposal xmlns='urn:ieee:iot:leg:sc:1.0" +
+			var Xml = "<contractProposal xmlns='urn:nf:iot:leg:sc:1.0" +
 				"' contractId='" + AgentAPI.Account.XmlEncode(ContractId) +
 				"' role='" + AgentAPI.Account.XmlEncode(Role) +
 				"' message='" + AgentAPI.Account.XmlEncode(Message) +
@@ -1258,7 +1258,7 @@
 
 			return Response;
 		},
-		"GetPaymentOptionsForBuyingEDaler": async function (ServiceId, ServiceProvider,
+		"GetPaymentOptionsForBuyingEDaler": async function (ServiceId, ServiceProvider, 
 			SuccessUrl, FailureUrl, CancelUrl, TransactionId, TabId, FunctionName)
 		{
 			var Request =
@@ -1477,6 +1477,20 @@
 			};
 
 			var Response = await AgentAPI.IO.Request("/Agent/StateMachines/CreateReport", Request);
+
+			return Response;
+		}
+	},
+	"Intelligence":
+	{
+		"CheckEndpoint": async function (Endpoint)
+		{
+			var Request =
+			{
+				"endpoint": Endpoint
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/CheckEndpoint", Request);
 
 			return Response;
 		}
