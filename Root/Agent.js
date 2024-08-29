@@ -1258,7 +1258,7 @@
 
 			return Response;
 		},
-		"GetPaymentOptionsForBuyingEDaler": async function (ServiceId, ServiceProvider, 
+		"GetPaymentOptionsForBuyingEDaler": async function (ServiceId, ServiceProvider,
 			SuccessUrl, FailureUrl, CancelUrl, TransactionId, TabId, FunctionName)
 		{
 			var Request =
@@ -1491,6 +1491,28 @@
 			};
 
 			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/CheckEndpoint", Request);
+
+			return Response;
+		},
+		"Add": async function (Endpoint, Expires, Vector, Protocol, Classification, Code, Message, Tags, AgentProperties)
+		{
+			var Request =
+			{
+				"Information":
+				{
+					"endpoint": Endpoint,
+					"expires": Expires,
+					"vector": Vector,
+					"protocol": Protocol,
+					"classification": Classification,
+					"code": Code,
+					"message": Message,
+					"Tag": Tags,
+					"AgentProperty": AgentProperties
+				}
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Add", Request);
 
 			return Response;
 		}
