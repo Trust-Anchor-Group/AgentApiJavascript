@@ -1538,6 +1538,17 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Update", Request);
 
 			return Response;
+		},
+		"Delete": async function (ObjectId)
+		{
+			var Request =
+			{
+				"objectId": ObjectId
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Delete", Request);
+
+			return Response;
 		}
 	}
 };
