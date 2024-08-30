@@ -1515,6 +1515,29 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Add", Request);
 
 			return Response;
+		},
+		"Update": async function (ObjectId, Endpoint, Expires, Vector, Protocol, Classification, Code, Message, Tags, AgentProperties)
+		{
+			var Request =
+			{
+				"objectId": ObjectId,
+				"Information":
+				{
+					"endpoint": Endpoint,
+					"expires": Expires,
+					"vector": Vector,
+					"protocol": Protocol,
+					"classification": Classification,
+					"code": Code,
+					"message": Message,
+					"Tag": Tags,
+					"AgentProperty": AgentProperties
+				}
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Update", Request);
+
+			return Response;
 		}
 	}
 };
