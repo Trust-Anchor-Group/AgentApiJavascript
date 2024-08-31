@@ -1549,6 +1549,25 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Delete", Request);
 
 			return Response;
+		},
+		"Get": async function (Endpoint, Vector, Protocol, Classification, Code, From, To, Offset, MaxCount)
+		{
+			var Request =
+			{
+				"endpoint": Endpoint,
+				"vector": Vector,
+				"protocol": Protocol,
+				"classification": Classification,
+				"code": Code,
+				"from": From,
+				"to": To,
+				"offset": Offset,
+				"maxCount": MaxCount
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Intelligence/Get", Request);
+
+			return Response;
 		}
 	}
 };
