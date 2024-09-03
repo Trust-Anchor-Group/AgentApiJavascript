@@ -2,25 +2,23 @@
 {
 	"IO":
 	{
-		"Protocol": null,
-		"Host": null,
 		"SetHost": function(host, secure = true) {
 			if(!host) {
-				AgentAPI.IO.Protocol = null;
-				AgentAPI.IO.Host = null;
+				AgentAPI.Account.SetSessionString("AgentAPI.host", null);
+				AgentAPI.Account.SetSessionString("AgentAPI.protocol", null);
 			}
 			else {
-				AgentAPI.IO.Protocol = secure ? "https" : "http";
-				AgentAPI.IO.Host = host;
+				AgentAPI.Account.SetSessionString("AgentAPI.host", host);
+				AgentAPI.Account.SetSessionString("AgentAPI.protocol", secure ? "https" : "http");
 			}
 		},
 		"GetBaseURL": function() {
-			const protocol = AgentAPI.IO.Protocol || (window.location.protocol.includes("https") ? "https" : "http");
-			const host = AgentAPI.IO.Host || window.location.host;
+			const protocol = AgentAPI.Account.GetSessionString("AgentAPI.protocol") || (window.location.protocol.includes("https") ? "https" : "http");
+			const host = AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
 			return `${protocol}://${host}`;
 		},
 		"GetHost": function() {
-			return AgentAPI.IO.Host || window.location.host;
+			return AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
 		},
 		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
