@@ -2,6 +2,24 @@
 {
 	"IO":
 	{
+		"SetHost": function(host, secure = true) {
+			if(!host) {
+				AgentAPI.Account.SetSessionString("AgentAPI.host", null);
+				AgentAPI.Account.SetSessionString("AgentAPI.protocol", null);
+			}
+			else {
+				AgentAPI.Account.SetSessionString("AgentAPI.host", host);
+				AgentAPI.Account.SetSessionString("AgentAPI.protocol", secure ? "https" : "http");
+			}
+		},
+		"GetBaseURL": function() {
+			const protocol = AgentAPI.Account.GetSessionString("AgentAPI.protocol") || (window.location.protocol.includes("https") ? "https" : "http");
+			const host = AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
+			return `${protocol}://${host}`;
+		},
+		"GetHost": function() {
+			return AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
+		},
 		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
 			var Request = new Promise((SetResult, SetException) =>
@@ -50,6 +68,8 @@
 
 				if (!Internal)
 					this.BeforeRequest(RequestPayload);
+
+				Resource = this.GetBaseURL() + Resource;
 
 				if (RequestPayload)
 				{
@@ -411,7 +431,7 @@
 		"Create": async function (UserName, EMail, Password, ApiKey, Secret, Seconds)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s = UserName + ":" + window.location.host + ":" + EMail + ":" +
+			var s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + EMail + ":" +
 				Password + ":" + ApiKey + ":" + Nonce;
 			var Response = await AgentAPI.IO.Request("/Agent/Account/Create",
 				{
@@ -452,7 +472,7 @@
 		"Login": async function (UserName, Password, Seconds)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s = UserName + ":" + window.location.host + ":" + Nonce;
+			var s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + Nonce;
 			var Response = await AgentAPI.IO.Request("/Agent/Account/Login",
 				{
 					"userName": UserName,
@@ -832,7 +852,7 @@
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
 			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" +
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" +
 				Namespace + ":" + Id;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + Nonce;
@@ -892,7 +912,7 @@
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
 			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + Nonce;
 			var PropertiesVector = [];
@@ -927,7 +947,7 @@
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
 			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + Attachment + ":" + FileName + ":" + ContentType;
 
@@ -1003,7 +1023,7 @@
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
 			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + LegalId + ":" + ContractId + ":" + Role;
 			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
@@ -1026,7 +1046,7 @@
 		"SignData": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, LegalId, DataBase64)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + DataBase64 + ":" + LegalId;
 			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
@@ -1142,7 +1162,7 @@
 			LegalId, RemoteId, PetitionId, Purpose)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
 				":" + LegalId + ":" + RemoteId;
@@ -1167,7 +1187,7 @@
 			LegalId, RemoteId, PetitionId, Purpose, ContentBase64)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
 				":" + LegalId + ":" + RemoteId + ":" + ContentBase64;
@@ -1193,7 +1213,7 @@
 			LegalId, RemoteId, PetitionId, Purpose)
 		{
 			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
-			var s1 = UserName + ":" + window.location.host + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
 			var s2 = s1 + ":" + KeySignature + ":" + PetitionId + ":" + Purpose +
 				":" + LegalId + ":" + RemoteId;
