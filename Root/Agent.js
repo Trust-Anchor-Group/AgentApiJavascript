@@ -2,23 +2,28 @@
 {
 	"IO":
 	{
-		"SetHost": function(host, secure = true) {
-			if(!host) {
-				AgentAPI.Account.SetSessionString("AgentAPI.host", null);
-				AgentAPI.Account.SetSessionString("AgentAPI.protocol", null);
+		"SetHost": function (host, secure = true)
+		{
+			if (!host)
+			{
+				AgentAPI.Account.SetSessionString("AgentAPI.Host", null);
+				AgentAPI.Account.SetSessionString("AgentAPI.Protocol", null);
 			}
-			else {
-				AgentAPI.Account.SetSessionString("AgentAPI.host", host);
-				AgentAPI.Account.SetSessionString("AgentAPI.protocol", secure ? "https" : "http");
+			else
+			{
+				AgentAPI.Account.SetSessionString("AgentAPI.Host", host);
+				AgentAPI.Account.SetSessionString("AgentAPI.Protocol", secure ? "https" : "http");
 			}
 		},
-		"GetBaseURL": function() {
-			const protocol = AgentAPI.Account.GetSessionString("AgentAPI.protocol") || (window.location.protocol.includes("https") ? "https" : "http");
-			const host = AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
+		"GetBaseURL": function ()
+		{
+			const protocol = AgentAPI.Account.GetSessionString("AgentAPI.Protocol") || (window.location.protocol.includes("https") ? "https" : "http");
+			const host = AgentAPI.Account.GetSessionString("AgentAPI.Host") || window.location.host;
 			return `${protocol}://${host}`;
 		},
-		"GetHost": function() {
-			return AgentAPI.Account.GetSessionString("AgentAPI.host") || window.location.host;
+		"GetHost": function ()
+		{
+			return AgentAPI.Account.GetSessionString("AgentAPI.Host") || window.location.host;
 		},
 		"Request": async function (Resource, RequestPayload, Internal, Language)
 		{
