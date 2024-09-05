@@ -433,15 +433,29 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Account/DomainInfo", null, false, Language);
 			return Response;
 		},
-		"Create": async function (UserName, EMail, Password, ApiKey, Secret, Seconds)
+		"Create": async function (UserName, EMail, PhoneNr, Password, ApiKey, Secret, Seconds)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
-			var s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + EMail + ":" +
-				Password + ":" + ApiKey + ":" + Nonce;
+			var s;
+
+			if (Seconds === undefined)
+			{
+				Seconds = Secret;
+				Secret = ApiKey;
+				Password = PhoneNr;
+				PhoneNr = "";
+			}
+
+			if (PhoneNr)
+				s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + EMail + ":" + PhoneNr + ":" + Password + ":" + ApiKey + ":" + Nonce;
+			else
+				s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + EMail + ":" + Password + ":" + ApiKey + ":" + Nonce;
+
 			var Response = await AgentAPI.IO.Request("/Agent/Account/Create",
 				{
 					"userName": UserName,
 					"eMail": EMail,
+					"phoneNr": PhoneNr,
 					"password": Password,
 					"apiKey": ApiKey,
 					"nonce": Nonce,
@@ -470,7 +484,15 @@
 					"code": Code
 				});
 
-			this.SetSessionString("AgentAPI.UserName", Result.userName);
+			return Result;
+		},
+		"VerifyPhoneNr": async function (PhoneNr, Code)
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/VerifyPhoneNr",
+				{
+					"phoneNr": PhoneNr,
+					"code": Code
+				});
 
 			return Result;
 		},
