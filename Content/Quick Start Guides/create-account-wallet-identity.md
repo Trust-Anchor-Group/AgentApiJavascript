@@ -1,6 +1,6 @@
 # **Quick Start Guide: Creating an Account, Wallet, and Digital Identity Using the Agent API (JavaScript Implementation)**
 
-This guide will help you set up an account, create a wallet, and apply for a digital identity using the Agent API with JavaScript.
+This guide will help you set up an account, create a wallet, and apply for a digital identity using the Agent API with JavaScript, based on the latest implementation and correct function hierarchy.
 
 ---
 
@@ -42,8 +42,6 @@ Or, clone the repository and include the `Agent.js` file in your project.
 **Initialization and Setting the Host:**
 
 ```javascript
-const AgentApi = require('./Agent'); // Adjust the path as necessary
-
 const agentApi = AgentAPI; // Using the global AgentAPI object from the script
 
 // Set the host (Neuron® domain) where API calls are made
@@ -162,8 +160,14 @@ Cryptographic keys are essential for secure transactions and digital signatures.
    agentApi.Crypto.GetAlgorithms()
      .then(algorithms => {
        console.log('Supported algorithms:', algorithms);
-       // Choose an algorithm, e.g., algorithms[0].Name
-       const chosenAlgorithm = algorithms[0].Name;
+       // Filter algorithms that are flagged as "safe"
+       const safeAlgorithms = algorithms.filter(alg => alg.safe);
+       if (safeAlgorithms.length === 0) {
+         throw new Error('No safe algorithms available.');
+       }
+
+       // Choose a safe algorithm
+       const chosenAlgorithm = safeAlgorithms[0];
 
        // Proceed to create a key with the chosen algorithm
        createKey(chosenAlgorithm);
@@ -182,8 +186,10 @@ Cryptographic keys are essential for secure transactions and digital signatures.
    ```javascript
    const keyId = 'yourKeyId';             // Your identifier for the key
    const keyPassword = 'yourKeyPassword'; // Secure password for the key
+   const localName = chosenAlgorithm.localName;
+   const namespace = chosenAlgorithm.namespace;
 
-   agentApi.Crypto.CreateKey('localName', 'namespace', keyId, keyPassword, password)
+   agentApi.Crypto.CreateKey(localName, namespace, keyId, keyPassword, password)
      .then(response => {
        console.log('Key created successfully:', response);
      })
@@ -192,8 +198,10 @@ Cryptographic keys are essential for secure transactions and digital signatures.
      });
    ```
 
-   - **Parameters:**
-     - `'localName'` and `'namespace'` can be arbitrary strings used to identify the key context.
+   **Important Notes:**
+
+   - **`localName` and `namespace`:** These are obtained from the chosen algorithm's `localName` and `namespace`.
+   - **Ensure Algorithm is Safe:** Only use algorithms where `safe` is `true`.
 
 3. **Save Your Key Information:**
 
@@ -239,15 +247,19 @@ A legal identity links your personal information to your account securely.
      // ... other required properties based on attributes
    };
 
-   agentApi.Legal.ApplyId('localName', 'namespace', keyId, keyPassword, password, personalDetails)
+   agentApi.Legal.ApplyId(localName, namespace, keyId, keyPassword, password, personalDetails)
      .then(response => {
        console.log('Identity application initiated:', response);
-       const identityId = response.data.id; // Save this ID for monitoring status
+       const identityId = response.legalId; // Save this ID for monitoring status
      })
      .catch(error => {
        console.error('Error applying for identity:', error);
      });
    ```
+
+   **Important Notes:**
+
+   - **`localName` and `namespace`:** Use the same values obtained from the safe algorithm in Step 5.
 
 2. **Add Attachments (If Required):**
 
@@ -258,9 +270,9 @@ A legal identity links your personal information to your account securely.
    const attachment = base64EncodedData; // The file data encoded in base64
    const fileName = 'photo.jpg';
    const contentType = 'image/jpeg';
-   const legalId = 'yourLegalId'; // From the response of ApplyId
+   const legalId = identityId; // From the response of ApplyId
 
-   agentApi.Legal.AddIdAttachment('localName', 'namespace', keyId, keyPassword, password, legalId, attachment, fileName, contentType)
+   agentApi.Legal.AddIdAttachment(localName, namespace, keyId, keyPassword, password, legalId, attachment, fileName, contentType)
      .then(response => {
        console.log('Attachment added successfully:', response);
      })
@@ -312,7 +324,7 @@ Since updates aren't real-time, you need to check the status manually.
   ```javascript
   agentApi.Legal.GetIdentity(legalId)
     .then(identity => {
-      console.log('Identity status:', identity.data.status);
+      console.log('Identity status:', identity.state);
     })
     .catch(error => {
       console.error('Error fetching identity status:', error);
@@ -351,6 +363,7 @@ Once approved:
 ## **Additional Tips**
 
 - **Security First:** Keep your passwords and cryptographic keys confidential.
+- **Use Safe Algorithms:** When creating keys, always choose algorithms where `safe` is `true`.
 - **Regular Checks:** Monitor your application status for any updates.
 - **Refer to API Docs:** For detailed information on API calls and parameters.
 - **Error Handling:** Always include `.catch` blocks to handle errors gracefully.
