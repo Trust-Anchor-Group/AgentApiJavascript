@@ -34,8 +34,6 @@ First, integrate the Agent API JavaScript library into your project.
 **Initialization and Setting the Host:**
 
 ```javascript
-const AgentApi = require('./Agent'); // Adjust the path as necessary
-
 const agentApi = AgentAPI; // Using the global AgentAPI object from the script
 
 // Set the host (Neuron® domain) where API calls are made
@@ -96,10 +94,10 @@ Fetch attributes like **Currency**, **CommissionPercent**, and the **TrustProvid
 
 ```javascript
 agentApi.Tokens.GetCreationAttributes()
-  .then(attributes => {
-    console.log('Token creation attributes:', attributes);
+  .then(response => {
+    console.log('Token creation attributes:', response);
     // Use these attributes in the next steps
-    proceedWithContractCreation(attributes);
+    proceedWithContractCreation(response);
   })
   .catch(error => {
     console.error('Error fetching token creation attributes:', error);
@@ -192,13 +190,34 @@ agentApi.Legal.GetContract(contractId, format)
 
 Each party must sign the contract using `SignContract`.
 
+**Before Signing: Get Key Algorithm Information**
+
+Use `GetPublicKey()` to retrieve the algorithm information used when the key was created.
+
+```javascript
+agentApi.Crypto.GetPublicKey(keyId)
+  .then(response => {
+    const algorithm = response.Algorithm;
+    const localName = algorithm.localName;
+    const namespace = algorithm.namespace;
+    console.log('Algorithm used for key:', algorithm);
+
+    // Proceed to sign the contract using the correct algorithm details
+    signContract(localName, namespace);
+  })
+  .catch(error => {
+    console.error('Error fetching public key:', error);
+  });
+
+function signContract(localName, namespace) {
+  // Proceed to the signing step
+}
+```
+
 **Process:**
 
 ```javascript
-const localName = 'localName';      // Arbitrary string
-const namespace = 'namespace';      // Arbitrary string
 const role = 'Creator';             // The role you're signing as
-const keyId = 'yourKeyId';          // From previous steps
 const keyPassword = 'yourKeyPassword'; // From previous steps
 const accountPassword = 'yourPassword'; // Account password
 const legalId = creatorLegalId;     // Your legal identity ID
@@ -215,6 +234,7 @@ agentApi.Legal.SignContract(localName, namespace, keyId, keyPassword, accountPas
 
 **Note:**
 
+- Use the **localName** and **namespace** obtained from `GetPublicKey()`.
 - Repeat this process for each role that you control.
 - The **TrustProvider** role is signed by the Neuron® automatically after validation.
 
@@ -278,19 +298,19 @@ Transferring a token involves creating and signing a transfer contract.
 1. **Obtain a Transfer Contract Template ID.**
 2. **Create a Transfer Contract** specifying the token and terms.
 3. **Sign the Contract** as both seller and buyer.
-4. **Monitor the Contract and Token Ownership Change.**
-
-**Note:** The steps are similar to creating a token but involve different roles and parameters.
+4. **Monitor the Contract and Token Ownership Change.
 
 ---
 
 ## **Additional Tips**
 
 - **Security First:** Keep your passwords and cryptographic keys confidential.
+- **Algorithm Selection:** Use `GetAlgorithms()` to select safe algorithms, and `GetPublicKey()` to retrieve algorithm details when needed.
 - **Template Details:** Always refer to the template documentation for required roles and parameters.
 - **Regular Checks:** Monitor contract and token statuses for any updates.
 - **Error Handling:** Include `.catch` blocks to handle errors gracefully.
 - **Notifications:** Use `PopMessages` to receive asynchronous updates from the Neuron®.
+- **Compliance:** Ensure compliance with any legal requirements when creating and managing tokens.
 
 ---
 
@@ -308,7 +328,7 @@ agentApi.IO.SetHost('YOUR_NEURON_DOMAIN');
 
 // Step 5: Get Token Creation Attributes
 agentApi.Tokens.GetCreationAttributes()
-  .then(attributes => {
+  .then(response => {
     // Use attributes in contract creation
   });
 
@@ -319,10 +339,13 @@ agentApi.Legal.CreateContract(templateId, visibility, parts, parameters)
     // Proceed to sign the contract
   });
 
-// Step 7: Get Contract Content
-agentApi.Legal.GetContract(contractId, 'Html')
-  .then(contract => {
-    // Display contract content
+// Step 8: Get Public Key Algorithm Information
+agentApi.Crypto.GetPublicKey(keyId)
+  .then(response => {
+    const algorithm = response.Algorithm;
+    const localName = algorithm.localName;
+    const namespace = algorithm.namespace;
+    // Proceed to sign the contract
   });
 
 // Step 8: Sign Contract
