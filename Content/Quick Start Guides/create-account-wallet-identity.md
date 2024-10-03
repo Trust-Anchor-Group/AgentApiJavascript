@@ -1,7 +1,3 @@
-Thank you for pointing that out! I apologize for the oversight. I'll update the tutorial to reflect the correct hierarchy of function calls based on the structure you've provided. The function calls will now use the correct namespaces, such as `agentApi.Account.CreateAccount`.
-
----
-
 # **Quick Start Guide: Creating an Account, Wallet, and Digital Identity Using the Agent API (JavaScript Implementation)**
 
 This guide will help you set up an account, create a wallet, and apply for a digital identity using the Agent API with JavaScript.
