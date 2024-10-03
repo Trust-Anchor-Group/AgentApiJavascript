@@ -366,11 +366,3 @@ Once approved:
 **Congratulations!** You've set up your account, created a wallet, and applied for a digital identity using the Agent API JavaScript implementation.
 
 ---
-
-This updated tutorial now includes:
-
-- **Setting the Host:** Using `agentApi.IO.SetHost` to set the Neuron® domain.
-- **Correct Function Hierarchy:** All function calls now use the correct hierarchy based on the structure you provided (e.g., `agentApi.Account.Create`, `agentApi.Crypto.CreateKey`, `agentApi.Legal.ApplyId`).
-- **Pascal Casing:** Function names are in PascalCase where appropriate.
-
-Let me know if there's anything else you'd like me to adjust or clarify!
