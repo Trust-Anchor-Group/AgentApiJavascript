@@ -1021,6 +1021,17 @@
 
 			return Response;
 		},
+		"ProposeTemplate": async function (TemplateBase64)
+		{
+			var Request =
+			{
+				"templateBase64": TemplateBase64
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/ProposeTemplate", Request);
+
+			return Response;
+		},
 		"GetIdentity": async function (LegalId)
 		{
 			var Request =
