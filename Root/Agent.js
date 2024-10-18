@@ -136,7 +136,12 @@
 		{
 			var Control = document.getElementById("AgentResponsePayload");
 			if (Control)
-				Control.innerText = JSON.stringify(Payload, null, 2);
+			{
+				if (Payload instanceof Error)
+					Control.innerText = Payload.message;
+				else
+					Control.innerText = JSON.stringify(Payload, null, 2);
+			}
 		},
 		"Log": function (Message)
 		{
@@ -821,6 +826,35 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Xmpp/PopMessages", Request);
 
 			return Response;
+		},
+		"ClearMessages": async function ()
+		{
+			var Request =
+			{
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Xmpp/ClearMessages", Request);
+
+			return Response;
+		},
+		"RegisterEventHandler": async function (LocalName, Namespace, Type, Function)
+		{
+			var Request =
+			{
+				"localName": LocalName,
+				"namespace": Namespace,
+				"type": Type,
+				"function": Function,
+				"tabId": TabID
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Xmpp/RegisterEventHandler", Request);
+
+			return Response;
+		},
+		"UnregisterEventHandler": async function (LocalName, Namespace, Type)
+		{
+			return this.RegisterEventHandler(LocalName, Namespace, Type, "");
 		}
 	},
 	"Storage":
