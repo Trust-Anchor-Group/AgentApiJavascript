@@ -1160,6 +1160,18 @@
 
 			return Response;
 		},
+		"GetSignedContracts": async function (Offset, MaxCount)
+		{
+			var Request =
+			{
+				"offset": Offset,
+				"maxCount": MaxCount
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Legal/GetSignedContracts", Request);
+
+			return Response;
+		},
 		"ReadyForApproval": async function (LegalId)
 		{
 			var Request =
