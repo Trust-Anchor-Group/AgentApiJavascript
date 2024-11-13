@@ -652,7 +652,7 @@
 			var Request =
 			{
 				"to": To,
-				"Xml": Xml
+				"xml": Xml
 			};
 
 			if (Subject)
