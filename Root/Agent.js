@@ -1191,11 +1191,6 @@
 				"requestSignature": RequestSignature
 			};
 
-			var Request =
-			{
-				"legalId": LegalId
-			};
-
 			var Response = await AgentAPI.IO.Request("/Agent/Legal/ReadyForApproval", Request);
 
 			return Response;
