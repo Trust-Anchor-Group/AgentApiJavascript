@@ -1188,10 +1188,7 @@
 				"legalId": LegalId,
 				"nonce": Nonce,
 				"keySignature": KeySignature,
-				"requestSignature": RequestSignature,
-				"attachmentBase64": Attachment,
-				"attachmentFileName": FileName,
-				"attachmentContentType": ContentType
+				"requestSignature": RequestSignature
 			};
 
 			var Request =
