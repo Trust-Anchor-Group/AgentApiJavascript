@@ -1010,7 +1010,7 @@
 			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
 			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
 			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
-			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + Attachment + ":" + FileName + ":" + ContentType;
+			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + Attachment + ":" + FileName + ":" + ContentType + ":" + LegalId;
 
 			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
 
@@ -1172,8 +1172,28 @@
 
 			return Response;
 		},
-		"ReadyForApproval": async function (LegalId)
+		"ReadyForApproval": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, LegalId)
 		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + LegalId;
+
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"legalId": LegalId,
+				"nonce": Nonce,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"attachmentBase64": Attachment,
+				"attachmentFileName": FileName,
+				"attachmentContentType": ContentType
+			};
+
 			var Request =
 			{
 				"legalId": LegalId
