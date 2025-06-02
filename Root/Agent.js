@@ -501,6 +501,16 @@
 
 			return Result;
 		},
+		"ResendVerificationCodes": async function (EMail, PhoneNr)
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/ResendVerificationCodes",
+				{
+					"eMail": EMail,
+					"phoneNr": PhoneNr
+				});
+
+			return Result;
+		},
 		"Login": async function (UserName, Password, Seconds)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
