@@ -438,7 +438,7 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Account/DomainInfo", null, false, Language);
 			return Response;
 		},
-		"Create": async function (UserName, EMail, PhoneNr, Password, ApiKey, Secret, Seconds)
+		"Create": async function (UserName, EMail, PhoneNr, Password, ApiKey, Secret, Seconds, Language)
 		{
 			var Nonce = this.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
 			var s;
@@ -456,6 +456,9 @@
 			else
 				s = UserName + ":" + AgentAPI.IO.GetHost() + ":" + EMail + ":" + Password + ":" + ApiKey + ":" + Nonce;
 
+			if (!Language)
+				Language = "en";
+
 			var Response = await AgentAPI.IO.Request("/Agent/Account/Create",
 				{
 					"userName": UserName,
@@ -465,7 +468,8 @@
 					"apiKey": ApiKey,
 					"nonce": Nonce,
 					"signature": await this.Sign(Secret, s),
-					"seconds": Seconds
+					"seconds": Seconds,
+					"language": Language
 				});
 
 			this.SetSessionString("AgentAPI.UserName", UserName);
@@ -501,12 +505,16 @@
 
 			return Result;
 		},
-		"ResendVerificationCodes": async function (EMail, PhoneNr)
+		"ResendVerificationCodes": async function (EMail, PhoneNr, Language)
 		{
+			if (!Language)
+				Language = "en";
+
 			var Result = await AgentAPI.IO.Request("/Agent/Account/ResendVerificationCodes",
 				{
 					"eMail": EMail,
-					"phoneNr": PhoneNr
+					"phoneNr": PhoneNr,
+					"language": Language
 				});
 
 			return Result;
