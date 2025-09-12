@@ -662,6 +662,14 @@
 				});
 
 			return Result;
+		},
+		"RemoteReferences": async function ()
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/RemoteReferences",
+				{
+				});
+
+			return Result;
 		}
 	},
 	"Xmpp":
