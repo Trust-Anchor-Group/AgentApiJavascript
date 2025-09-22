@@ -71,7 +71,12 @@
 				if (!Internal)
 					this.BeforeRequest(RequestPayload);
 
-				Resource = this.GetBaseURL() + Resource;
+				var CheckToken = true;
+
+				if (Resource.startsWith("https://"))
+					CheckToken = false;
+				else
+					Resource = this.GetBaseURL() + Resource;
 
 				if (RequestPayload)
 				{
@@ -88,9 +93,12 @@
 				if (Language)
 					xhttp.setRequestHeader("Accept-Language", Language);
 
-				var Token = AgentAPI.Account.GetSessionString("AgentAPI.Token");
-				if (Token)
-					xhttp.setRequestHeader("Authorization", "Bearer " + Token);
+				if (CheckToken)
+				{
+					var Token = AgentAPI.Account.GetSessionString("AgentAPI.Token");
+					if (Token)
+						xhttp.setRequestHeader("Authorization", "Bearer " + Token);
+				}
 
 				if (RequestPayload instanceof FormData)
 					xhttp.send(RequestPayload);
@@ -631,6 +639,32 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Account/Transfer", Request);
 
 			return Response;
+		},
+		"PrepareRemoteQuickLogin": async function ()
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/PrepareRemoteQuickLogin",
+				{
+				});
+
+			return Result;
+		},
+		"RemoteQuickLogin": async function (Domain, LegalId, Purpose)
+		{
+			var Result = await AgentAPI.IO.Request("https://" + Domain + "/Agent/Account/RemoteQuickLogin",
+				{
+					"legalId": LegalId,
+					"purpose": Purpose
+				});
+
+			return Result;
+		},
+		"RemoteReferences": async function ()
+		{
+			var Result = await AgentAPI.IO.Request("/Agent/Account/RemoteReferences",
+				{
+				});
+
+			return Result;
 		}
 	},
 	"Xmpp":
