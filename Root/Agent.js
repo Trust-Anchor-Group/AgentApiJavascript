@@ -650,11 +650,16 @@
 		},
 		"RemoteQuickLogin": async function (Domain, LegalId, Purpose)
 		{
-			var Result = await AgentAPI.IO.Request("https://" + Domain + "/Agent/Account/RemoteQuickLogin",
-				{
-					"legalId": LegalId,
-					"purpose": Purpose
-				});
+			var Request =
+			{
+				"legalId": LegalId,
+				"purpose": Purpose
+			};
+
+			if (TabID)
+				Request["tabId"] = TabID;
+
+			var Result = await AgentAPI.IO.Request("https://" + Domain + "/Agent/Account/RemoteQuickLogin", Request);
 
 			return Result;
 		},
