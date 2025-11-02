@@ -978,6 +978,71 @@
 		{
 			var Response = await AgentAPI.IO.Delete(Url);
 			return Response;
+		},
+		"StoreInVault": async function (VaultId, Type, ClientId, Tags)
+		{
+			var Request =
+			{
+				"vaultId": VaultId,
+				"type": Type,
+				"clientId": ClientId,
+				"Tags": Tags
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/StoreInVault", Request);
+
+			return Response;
+		},
+		"GetFromVault": async function (VaultId, Masked)
+		{
+			var Request =
+			{
+				"vaultId": VaultId,
+				"masked": Masked
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/GetFromVault", Request);
+
+			return Response;
+		},
+		"SearchInVault": async function (Type, ClientId, Masked, Tags, Offset, MaxCount)
+		{
+			var TagsVector = [];
+
+			for (var TagName in Tags)
+			{
+				var TagValue = Tags[TagName];
+				TagsVector.push(
+					{
+						"name": TagName,
+						"value": TagValue
+					});
+			}
+
+			var Request =
+			{
+				"type": Type,
+				"clientId": ClientId,
+				"masked": Masked,
+				"offset": Offset,
+				"maxCount": MaxCount,
+				"Tags": TagsVector
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/SearchInVault", Request);
+
+			return Response;
+		},
+		"DeleteFromVault": async function (VaultId)
+		{
+			var Request =
+			{
+				"vaultId": VaultId
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/DeleteFromVault", Request);
+
+			return Response;
 		}
 	},
 	"Crypto":
