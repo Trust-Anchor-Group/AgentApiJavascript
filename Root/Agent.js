@@ -1043,6 +1043,32 @@
 			var Response = await AgentAPI.IO.Request("/Agent/Storage/DeleteFromVault", Request);
 
 			return Response;
+		},
+		"CreateVaultLink": async function (LocalName, Namespace, KeyId, KeyPassword, AccountPassword, VaultId, Ttl, UseCount, Masked)
+		{
+			var UserName = AgentAPI.Account.GetSessionString("AgentAPI.UserName");
+			var Nonce = AgentAPI.Account.Base64Encode(window.crypto.getRandomValues(new Uint8Array(32)));
+			var s1 = UserName + ":" + AgentAPI.IO.GetHost() + ":" + LocalName + ":" + Namespace + ":" + KeyId;
+			var KeySignature = await AgentAPI.Account.Sign(KeyPassword, s1);
+			var s2 = s1 + ":" + KeySignature + ":" + Nonce + ":" + VaultId + ":" + Ttl + ":" + UseCount + ":" + (Masked ? "1" : "0");
+
+			var RequestSignature = await AgentAPI.Account.Sign(AccountPassword, s2);
+
+			var Request =
+			{
+				"keyId": KeyId,
+				"nonce": Nonce,
+				"keySignature": KeySignature,
+				"requestSignature": RequestSignature,
+				"vaultId": VaultId,
+				"ttl": Ttl,
+				"useCount": UseCount,
+				"masked": Masked
+			};
+
+			var Response = await AgentAPI.IO.Request("/Agent/Storage/CreateVaultLink", Request);
+
+			return Response;
 		}
 	},
 	"Crypto":
